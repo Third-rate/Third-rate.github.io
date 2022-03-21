@@ -1,0 +1,497 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0221)https://caiyizhe.gitee.io/adc/fzu-campus-today-master/card/page3.html?userName=%E5%91%A8%E7%A7%A6&deptName=%20%E7%B4%AB%E9%87%91%E5%9C%B0%E8%B4%A8%E4%B8%8E%E7%9F%BF%E4%B8%9A%E5%AD%A6%E9%99%A2&marqueeStr=%E7%88%B1%E5%9B%BD -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>
+	福州大学一码通
+</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="./福州大学一码通_files/bootstrap.min.css">
+<link rel="stylesheet" href="./福州大学一码通_files/style4.css">
+
+<script type="text/javascript" src="./福州大学一码通_files/jquery-3.3.1.min.js.下载"></script>
+
+<script type="text/javascript" src="./福州大学一码通_files/jquery.easyui.min.js.下载"></script>
+
+<script type="text/javascript" src="./福州大学一码通_files/easyui-lang-zh_CN.js.下载"></script>
+<script src="./福州大学一码通_files/chinesealert.js.下载" type="text/javascript"></script>
+
+<script src="./福州大学一码通_files/common.js.下载" type="text/javascript"></script>
+<script src="./福州大学一码通_files/Jquery.MaskLayer.js.下载" type="text/javascript"></script>
+<script src="./福州大学一码通_files/jquery-powerFloat-min.js.下载" type="text/javascript"></script>
+<script src="./福州大学一码通_files/jquery.qrcode.min.js.下载" type="text/javascript"></script>
+
+<style type="text/css">
+     #asd{
+				color: white;
+				text-decoration: none;
+			}
+     .obj{
+	outline:none;
+	line-height:29px;
+	padding:10px;
+	padding-bottom:0;
+	height:29px;
+
+    border-radius: 5px;
+ }
+@-moz-document url-prefix() {
+   .obj{
+	outline:none;
+	line-height:40px;
+	padding:10px;
+	height:40px;
+    width: 170px;
+ }
+}
+@media all and (-ms-high-contrast:none){
+  .obj{
+	outline:none;
+	line-height:29px;
+	padding:10px;
+	padding-bottom:0;
+	height:29px;
+    width: 150px;
+ }
+}
+ </style>
+    <script type="text/javascript" src="./福州大学一码通_files/JsBarcode.all.min.js.下载"></script>
+    <link href="./福州大学一码通_files/my_loading.css" rel="stylesheet">
+    <script src="./福州大学一码通_files/jq_loading.js.下载" type="text/javascript"></script>
+    
+   
+
+    <style>
+
+        .jkmColor{
+
+        }
+
+
+    </style>
+        <!--点击选择支付方式-->
+        <script type="text/javascript">
+            var jkm ='#C0C0C0';
+            var acctype = "";//支付方式类型
+            var InterValObj; //timer变量，控制时间
+            var curCount = 60; //当前剩余秒数
+            var fullUrl = 'ws://ykt.fzu.edu.cn:2016';//监听地址
+            var myScroll;
+            //选择支付方式
+            $(function () {
+                var push1 = [];
+                $.each(jQuery(".payment-box").find("dl"), function (m, n) {
+                    var model = {};
+                    model.text = $(this).find('.title').html();
+                    model.src = $(this).find("img").attr("src");
+                    model.value = jQuery(n).attr("tag");
+                    model.desc = $(this).find('.dec').html();
+                    push1.push(model);
+                });
+                if (push1.length == 1) {
+                    document.getElementById("showUserPicker").innerHTML = "";
+                }
+                if (push1.length >= 1) {
+                    acctype = push1[0].value;
+                    // $('#payWay').html('<img src="' + push1[0].src + '"/><span>' + push1[0].text + acctype + '</span');
+                    $('#payWay').html('<img src="' +
+                        push1[0].src +
+                        '"/><div style="text-align: left; font-size:13px;"><div style="font-weight: 600;">' +
+                        push1[0].text +
+                        '</div><div>' +
+                        push1[0].desc +
+                        '</div></div>');
+
+                }
+                $('.payment-box').find('em').first().removeClass('icon-uncheckbox').addClass('icon-checkbox');
+                $('#changeWay').click(function () {
+                    $('#paymethodshow').show();
+                    $('.shadeBg').show();
+                });
+                $('.payment-box').find('dl').click(function () {
+                    acctype = $(this).attr('tag');
+                    $('.payment-box').children('dl').find('dd').children('em').removeClass('icon-checkbox').addClass('icon-uncheckbox');
+                    $(this).children('dd').find('em').removeClass('icon-uncheckbox').addClass('icon-checkbox');
+                    //$('#payWay').html('<img src="' + $(this).find("img").attr("src") + '"/><span>' + $(this).find('.title').html() + '</span>');
+                    $('#payWay').html('<img src="' +
+                        $(this).find("img").attr("src") +
+                        '"/><div style="text-align: left; font-size:13px;"><div style="font-weight: 600;">' +
+                        $(this).find('.title').html() +
+                        '</div><div>' +
+                        $(this).find('.dec').html() +
+                        '</div></div>');
+                    $('#paymethodshow').hide();
+                    $('.shadeBg').hide();
+                    getreqestbarcode();
+                });
+                $('.shadeBg').click(function () {
+                    $('#paymethodshow').hide();
+                    $('.shadeBg').hide();
+                });
+                $('#more').click(function () {
+                    $('#paymethodshow').show();
+                });
+                $("#qrCodeIco").css("margin", ($("#code").height() - $("#qrCodeIco").height()) / 2);//控制Logo图标的位置
+                //点击查看一维码
+                $('.tx').click(function () {
+                    $('#oneCode').show();
+                    $('#tips').show();
+                });
+                $('#oneCode').click(function () {
+                    $(this).hide();
+                });
+                //关闭提示
+                $('.btn_box').click(function () {
+                    $('#tips').toggle();
+                    return false;
+                });
+                //判断横屏和竖屏
+                var width = document.documentElement.clientWidth;
+                var height = document.documentElement.clientHeight;
+                if (width < height) {
+                    //console.log(width + " " + height);
+                    $print = $('#oneCode');
+                    $print.width(height);
+                    $print.height(width);
+                    $print.css('top', (height - width) / 2);
+                    $print.css('left', 0 - (height - width) / 2);
+                    $print.css('transform', 'rotate(90deg)');
+                    $print.css('transform-origin', '50% 50%');
+                }
+                //福大健康码防伪获取服务器时间
+                // GetDate(true);
+            });
+
+            $(function () {
+                createqrcode();
+                $('#codew').click(function () {
+                    // getreqestbarcode();
+                    createqrcode();
+                });
+             
+
+            });
+            function createqrcode() {
+                curCount = 60;
+                window.clearInterval(InterValObj); //停止计时器
+                InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+                var i = parseInt(10*Math.random());
+                var qrcode = $("#qrcode" + i).text();
+                msgSend(qrcode);
+                var qrkcode = "";
+                var j = 0;
+                for (var i = 1; i <= qrcode.length; i++) {
+                    if (i % 4 == 0) {
+                        qrkcode += qrcode.substr(j * 4, 4) + " ";
+                        j++;
+                    }
+                }
+                var options = {
+                    width: 2,//较细处条形码的宽度
+                    height: 70, //条形码的宽度，无高度直接设置项，由位数决定，可以通过CSS去调整，见下
+                    //quite: 10,
+                    format: "CODE128",
+                    displayValue: false,//是否在条形码下方显示文字
+                    margin: 2
+                };
+                //JsBarcode(barcode, str, options);//原生
+                // $('#barcode').JsBarcode(qrcode, options);//jQuery
+                if (qrcode != "" && qrcode.length == 20) {
+                    qrkcode = qrcode.substr(0, 4) + "************ 查看数字";//数字隐藏
+                }
+                JsBarcode("#barcode", qrcode, options);
+                JsBarcode("#barcode1", qrcode, options);
+                $("#dvtext").text(qrcode);
+                $("#dvtext1").text(qrkcode);
+                if (jkm=='') {
+                    jkm = "#000000";
+                }
+                jkm = "#000000";
+ 
+                var qrcodeobj = $("#code").empty().qrcode({
+                    render: "table", //table方式  canvas
+                    correctLevel: 0,//纠错等级    
+                    //top: 800,
+                    //background      : "#005992",//背景颜色    
+                    foreground: jkm, //前景颜色    
+                    text: qrcode
+                });
+                
+                //判断健康码颜色改变提示语
+                if (jkm == "#000000") {
+                    $(".jkmColor").css("color", "#1d953f");
+                    $("#slogan").html("未见异常，允许通行，请主动出示，配合检测，并做好自我防护，出行前请确认。");
+                } else if (jkm == "#d20c12") {
+                    $(".jkmColor").css("color", jkm);
+                    $("#slogan").html("此码不可通行，码颜色将根据您的健康信息和通行权限动态更新。");
+                } else {
+                    $(".jkmColor").css("color", jkm);
+                }
+            }
+            // //获取支付码
+            // function getreqestbarcode() {
+            //     var i = parseInt(10*Math.random());
+            //     console.log(i)
+            //     // $("#qrcode" + i).text(k);
+            //     createqrcode();
+            //     $.myloading("hide");
+                
+            // }
+            // // 生成随机数
+            // function randomNum(minNum,maxNum){ 
+            //     switch(arguments.length){ 
+            //         case 1: 
+            //             return parseInt(Math.random()*minNum+1); 
+            //             break; 
+            //         case 2: 
+            //             return parseInt(Math.random()*(maxNum-minNum+1)+minNum); 
+            //             break; 
+            //         default: 
+            //             return 0; 
+            //             break; 
+            //     } 
+            // }
+            //timer处理函数
+            function SetRemainTime() {
+                if (curCount == 0) {
+                    // createqrcode();
+                    // getreqestbarcode();
+                }
+                else {
+                    curCount--;
+                }
+            }
+
+            function msgSend(temp) {
+                try {
+                    var ws = null;
+
+                    if ("WebSocket" in window) {
+                        ws = new WebSocket(fullUrl);
+
+                    } else if ("MozWebSocket" in window) {
+                        ws = new MozWebSocket(fullUrl);
+
+                    } else {
+                        return false;
+                    }
+
+                    if (ws != null) {
+                        ws.onopen = function () { };
+                        ws.onclose = function () { };
+                        ws.onerror = function (event) { };
+                        ws.onmessage = function (msg) {
+                            $("#txtvalue").val(msg.data);
+                            $("#form1").submit();
+                        };
+                        delayExcute(temp, ws);
+                    }
+                } catch (e) {
+                    //alert(e);
+                }
+
+            }
+
+            /*
+             *html发送二维码给服务端进行监听
+             */
+            function delayExcute(temp, ws) {
+                if (ws != null) {
+                    window.setTimeout(function () {
+                        ws.send("(" + temp + ")");
+                    }, 500);
+
+                }
+            }
+            // setInterval(function () {
+            //     GetDate(false);
+            // }, 1000);
+
+            // function GetDate(flag) {
+            //     AjaxGet(AjaxHandlerUrl + 'ThirdWeb/GetServerDate', null, function (result) {
+            //         $("#monthDay").html(result.monthDay);
+            //         $("#second").html(result.second);
+            //         $("#hourMinute").html(result.hourMinute);
+            //         if (flag) {
+            //             $("#marqueeStr").html(result.marqueeStr);
+            //         }
+            //     });
+            // }
+            //动态获取时间
+            window.setInterval(function (){
+	    		    var nowTime = getNowFormatDate();
+                    $("#monthDay").html(getMonthAndDay());
+                    $("#hourMinute").html(nowTime.split(" ")[1].substring(0,5));
+                    $("#second").html(nowTime.split(" ")[1].substring(6,8));
+                    // $("#marqueeStr").html('文明');
+	    		},1000);
+
+            function getNowFormatDate() {//获取当前时间
+                var date = new Date();
+                var seperator1 = "-";
+                var seperator2 = ":";
+                var month = date.getMonth() + 1<10? "0"+(date.getMonth() + 1):date.getMonth() + 1;
+                var strDate = date.getDate()<10? "0" + date.getDate():date.getDate();
+                var hour = date.getHours()<10?"0" + date.getHours():date.getHours();
+                var minute = date.getMinutes()<10?"0" + date.getMinutes():date.getMinutes();
+                var second = date.getSeconds()<10?"0" + date.getSeconds():date.getSeconds();
+                //var currentdate = date.getFullYear() + seperator1  + month  + seperator1  + strDate
+                var currentdate = month  + seperator1  + strDate
+                        + " "  + hour  + seperator2  + minute  + seperator2 + second
+                        ;
+                return currentdate;
+            }
+            function getMonthAndDay() {//获取当前时间
+                var date = new Date();
+                var month = date.getMonth() + 1;
+                var strDate = date.getDate();
+                var currentdate = add0(month)  + "月" + add0(strDate) +"日";
+                return currentdate;
+            }
+
+            //修改月、天的格式，保持两位数显示
+            function add0(m){
+                return m<10?'0'+m:m
+            }
+
+            function getParam(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null)
+                    return decodeURI(r[2]);   //对参数进行decodeURI解码
+                return null;
+            }
+
+            $(function() {
+                var val1 = getParam("userName");
+                var val2 = getParam("deptName");
+                var val3 = getParam("marqueeStr");
+                $("#userName").text("姓名：" + val1);
+                $("#deptName").text("部门：" + val2);
+                $("#marqueeStr").html(val3);
+            });
+
+        </script>
+    </head>
+<body class="sweep_bg">
+<header>
+
+</header>
+    <div style="font-size: 20px;color: white;position: relative;width: 86%;margin: 20px auto 0 auto;">
+        <img src="./福州大学一码通_files/FZU.png" style="width: 99px; float: right; position: absolute;  right: 0px; top: -17px;">
+        <span id="userName" style="display: block;padding-bottom: 20px;">姓名：周秦</span>
+        <span id="deptName" style="display: block;">部门： 紫金地质与矿业学院</span>
+    </div>
+        <div class="pay-container">
+
+          	<div class="tx">
+	              <img id="barcode1" src="data:image/png;base64,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">
+
+	             
+                  <div id="currentTime" class="jkmColor" style="font-size: large; margin: 10px; color: rgb(29, 149, 63);">
+                      <b id="monthDay">02月25日</b>
+                      <b id="second" style="font-size: 35px;">01</b>
+                      <b id="hourMinute">19:40</b>
+                  </div>
+	         </div>
+            <div id="codew" style="">
+                
+               
+                <div class="qr_code" style="width: 125px; height: 125px;" id="code"><table style="border: 0px; border-collapse: collapse; background-color: rgb(255, 255, 255);"><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td></tr><tr><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(255, 255, 255);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td><td style="background-color: rgb(0, 0, 0);"></td></tr></table></div>
+                <div>
+                    <marquee class="jkmColor" style="height: 35px; font-size: 40px; display: block; padding-top: 20px; color: rgb(29, 149, 63);" id="marqueeStr">爱国</marquee>
+                </div>
+                <div id="slogan" class="jkmColor" style="width: 80%; text-align: left; margin: 0px auto; color: rgb(29, 149, 63);">未见异常，允许通行，请主动出示，配合检测，并做好自我防护，出行前请确认。</div>     
+            </div>
+           
+          	<div class="bank_update" id="changeWay">
+            	<div id="payWay" class="bank" style="display:flex;align-items:center;justify-content:center;line-height: normal; margin-left: 30px;"><img src="./福州大学一码通_files/card1.jpg"><div style="text-align: left; font-size:13px;"><div style="font-weight: 600;">一卡通</div><div>适用所有场景</div></div></div> 
+                <a id="showUserPicker" type="button" style="margin-right: 30px;"></a>
+        	</div>
+            
+        </div>
+        <div class="mui-content">
+            <div class="mui-content-padded"></div>
+        </div>
+         <div style="      margin: 30px;  text-align: center;">
+             <a href="http://ehall.fzu.edu.cn/qljfwapp/sys/lwReportEpidemic/*default/index.do#/" style="color: white;font-size: large;font-weight: 700;    border-radius: 5px;padding: 2px 6px 2px 6px;border: 1px solid;">每日健康填报</a>
+
+         </div>
+
+        <!--选择支付方式-->
+        <div id="paymethodshow" class="popup">
+            <div class="caption-head border font-size-20 flex-box">
+                <button onclick="$(&#39;#paymethodshow&#39;).hide();$(&#39;.shadeBg&#39;).hide();" class="btn01">
+                    <em class="icon-close font-size-24">×</em>
+                </button>
+            <div class="fit text-center">选择支付方式</div>
+            </div>
+            <div class="profile-box">
+            <div class="liushui-list payment-box">
+                
+                
+                        <dl tag="###">
+                            <dt><img alt="" src="./福州大学一码通_files/card1.jpg"></dt>
+                            <dd class="f">
+                                <div class="title">一卡通</div>
+                                <div class="dec">适用所有场景</div>
+                            </dd>
+                            <dd><em class="icon-checkbox"></em></dd>
+                        </dl>
+                               
+                
+            </div>
+            </div>
+        </div>
+        <div class="shadeBg">            
+        </div>
+
+<div style="text-align:center;position: absolute;bottom: .2rem;width: 100%;">
+    <div id="ccTips" style="margin-bottom: 100px;">
+        暂不支持此服务
+    </div>
+</div>
+       <div id="oneCode">
+           <div class="one">
+                <div id="dvtext">40279375754275758510</div>
+                <div class="oneimg">
+                    <img id="barcode" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASYAAABMCAYAAADA3BpSAAAAAXNSR0IArs4c6QAAB3FJREFUeF7tneFyszoMRG/e/6F7J03Sgj8rZ23MlMyc/mxooLK0Wq1kc/v6+vr6zx8toAW0wIUscBOYLrQaPooW0ALfFvgBptvttjPJi0i9ft8Sq/b61x/TdRVBa+9T3fd1H7p/9f+0f189L/3/9BytPeh5Wn8ku7fPV9n/6PfSfWgdqvuf9bxnfS/5dft/pn5FcZPGS+XXtD7V57P+m94P/erFmASmx1KsAsjZhZ0FzrMDkvyDArMCclISrgbQowkpBQwCsqMJplofgelpmTQDyJgeDJYc9mwmhpmtYdoEkGc/L91/FvhlTP2KihhxlaDRr2RMe+1fxvSwR2UHYoIEDALT3r6WcoWEJDAJTEkJaynX95OWMaRAQwCdVgyjjDpNLHQdVT5UOsqYihJyVLsYXYjZhZ0tNYipzH4vOpClXBebRgGDrldjagKZArhCxkokpAA/2g2jQDoaoGlNLTD1x+OIKawKwNWiuhqTGlNX40gBQWB6Py9LiaZKDJZylnLbGCSCYSnXWEBgEpjuLiFj6ovsxOQJUEgycI4JtA0qGWaZQ8rcyAFWBw45zNESVsYkY5IxddrVKSDImGRMMqZfxpgymK6Cv2GelOgrTblK0BSnbklp9jA7x+Qc0xbYiFlTQFdMlQLdcYEndBFVT7sSdB2JZnblHq5MAUEZpwqY0e+l+1BGJqb7aSUtMYOqpE4HVqnkps/pPiQxqDE1FljFVCiQZheWAJUyJ2XIKoBpvuXs7yV7Ckz9lT+6bjImGdPOs1YBJGWmT2MKxKirTCtj6jNgSigCk8AkMAWnKghMduXsytmVU2N6RsGoJlZpPEdLZdJOiTGS9kOl39HnT7Wj9LpRaWN4cNdNvG7i7YntaSCpMakxbS1A/hD7lcAkMAlMv6GVaoxVANqV2++pq7RWbKoITAKTwCQwreoqy5jckvLtS9TdOapNYGbz2JNuTJNmROtmV86unF05u3I/PmApt8dZSkw0DmIp97RAasjRbs9oF6JakLO6Rmd9L9mTqDs57qfNc73+HzWm7LwtgUlg+rbA6kAXmN6/FIK0mRbIyJ7V9UdL8vbvq+dIrxtN1I4LPDflztbwKZUfzZz0PKscT2B6WPIsO4yuu8C0Xw/HBYoXeFJGEpg8XWALbFTyy5j2FqDSXmASmLoxQ4E2TLntynXtbFdub5Zhv3KOyTmmuwsRU3SvnHvltlCjxtQc5EY1/lFxkQKUukxHxcPZUrPtflQlhozpYZlZO5D/VeuQljC0/vQ53ad9vrS7mGqklnIOWO4CTGDKXi80G9hu4s3sKzAJTALTxJnUAlO/S0YivoypafcfrWVTal05bLo1YNXCzgaOjCnL6LP2lTFl9pUxyZhkTDKmf+a11JjCNvEoBazaiqnorPjt65vuvuKApS+83GEGUV4qzQSmua6RpVxWaljKqTENlRqr2vQyJhmTjMkXXv6j+cqY9iZJgbIqVY9OEB/9Xnp+EjupBF9dcp3NHFvGRU0PaqqMNmdmGV/7nG7iha0htHBU+qUGpwBf/Rytw6Va21HHWx3oApOnC9x9MvVfSlQkzv/4m1tS3JKydbzhPU1hE6RiGquBVMa0B9IUKIj5CUzOMe20OWJ6qcPMMjEZk4xJxtSZS7GUyxjd2UzBTbxu4t2yqqNxiQnPUi4L/NGFUGPKjl61lNu374nZ0uek4ZBfzmq21BQYlggEJoFJjek3HNOxlXRXPjVV7Mr1589uApPAJDAJTIrfcL6Sk98PFxk9L0iNycnvdwkmLdHS60alDUs5X0ZQJb8pwEOR0nGBrr2PdlPTUy1G76PG9LRA2s5Oa/tRkW20hl/1HOQAnyb62pWzK2dX7k0pIzC9H6BbDXgyJueYtiUiSQbpQCf6leK34rfit+K34rfi97cPrGY2lMmqtjW1szGzqTGpMW0sIGPyBMudmC0w2ZWzK9fZbUwiMwXOKtGZMvxR5tCmx3TQLm0CzD4f2Xf2e8melCHJXp/GHEnjpDgge9I60edOfocUPg1IgWkfws4xPexxNTsITA8LOMfkCy93iEUZcTUDoQwvY+rLxqPzRXR9xTzp72h9VjP+9H7oV3bl7Mq90ybQgULmXDGN1UB6dkkrY5IxLaGMac1f1e7pBG4/b9ZnL39aQDpg6YDl1sct5SzlLOU6msZflbQyJhmTjOlCASljkjHJmNyScrlulMAkMAlMApPA9IwCxwXenwRqV67ReqgtONqFcY7JOaZeA0FgEph2fkEHtglM+wFAu3J7C6Rdm0/rTip+K34rfit+X66kFZgEJoFJYBKYwtM4aA6vZfTV4Gx6XcqI2znCdMzDlxEU2hmVsqOZM90zWDlY6nirSyMnvz0o7u57qf+SxCMwNVslqHtBgT+aIapM0f6+0qauJvo6LuC4gOMCjgtcroQRmAQmgUlgEpicY4o0VqoE0tJqVVc5vR9KBJ4u4OkCWw2h0tZkTDImGZOMScYkY5IxVTTO32sBLaAF/sICP+MCf3Fz76kFtIAW6FlAYNIvtIAWuJwFBKbLLYkPpAW0wP90/gEbem3QSgAAAABJRU5ErkJggg==">
+                </div>
+           </div>
+           <div class="tipsbox" id="tips">
+               
+                <div class="tips-txt">
+                    付款码数字仅用于付钱时向商家出示 为防诈骗，请不要发送给他人
+                </div>
+                <div class="btn_box mar_bot04 part-top01">
+                     <button type="button" class="btn   font_20">我知道了</button>
+                </div> 
+            </div>
+       </div>
+        <form action="https://caiyizhe.gitee.io/ThirdWeb/OrderResult" id="form1" method="POST">
+            <input type="hidden" name="txtvalue" id="txtvalue">
+            <input type="hidden" id="appUrl" value="">
+            <inout type="hidden" id="appFlag" value="">
+            <inout type="hidden" id="isshowheader" value="0">
+        
+    <div style="display: none;" id="qrcode0">40373238485875757502</div>
+
+    <div style="display: none;" id="qrcode1">40057768095395713234</div>
+
+    <div style="display: none;" id="qrcode2">40375757221243103046</div>
+
+    <div style="display: none;" id="qrcode3">40227575242457575571</div>
+
+    <div style="display: none;" id="qrcode4">40250137575424572724</div>
+
+    <div style="display: none;" id="qrcode5">40127575757505069840</div>
+
+    <div style="display: none;" id="qrcode6">40758313757577575813</div>
+
+    <div style="display: none;" id="qrcode7">40843785757542670204</div>
+
+    <div style="display: none;" id="qrcode8">40279375754275758510</div>
+
+    <div style="display: none;" id="qrcode9">40637425757537104990</div>
+
+
+</inout></inout></form><!----></body></html>
